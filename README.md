@@ -6,7 +6,7 @@ Fungus で CSVを使ったテキスト管理を行うプロトタイプ
 
 1. import [Fungus v3.13.8](https://github.com/snozbot/fungus/releases/tag/v.3.13.8)
 
-# Demo
+# [Demo](https://ayutaz.github.io/FungusCSV/)
 
 
 # requirements
