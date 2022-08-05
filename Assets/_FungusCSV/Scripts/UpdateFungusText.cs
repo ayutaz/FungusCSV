@@ -1,4 +1,6 @@
-﻿using Fungus;
+﻿using System;
+using Cysharp.Threading.Tasks;
+using Fungus;
 using UnityEngine;
 
 namespace _FungusCSV
@@ -15,10 +17,18 @@ namespace _FungusCSV
 
         private async void Start()
         {
-            var data = await LoadTextData.GetGameInfo<TextDataList>();
-            var fungusText = LoadTextData.ConvertFungusTextFormat(data);
-            _localization.SetStandardText(fungusText);
-            gameStarted.enabled = true;
+            try
+            {
+                var data = await LoadTextData.GetGameInfo<TextDataList>(this.GetCancellationTokenOnDestroy());
+                var fungusText = LoadTextData.ConvertFungusTextFormat(data);
+                _localization.SetStandardText(fungusText);
+                gameStarted.enabled = true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                // throw;
+            }
         }
     }
 }
