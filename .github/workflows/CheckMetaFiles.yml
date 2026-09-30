@@ -2,7 +2,9 @@ name: CheckMetaFiles
 
 env:
   UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-  GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+  # unity-meta-check の PR コメント投稿に使う。PERSONAL_ACCESS_TOKEN が未設定だと空になり
+  # API が 401 (Bad credentials) を返して失敗するため、組み込みのトークンにフォールバックする
+  GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN || github.token }}
 
 # Controls when the action will run. 
 on:
@@ -15,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout This Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: false
           lfs: true
