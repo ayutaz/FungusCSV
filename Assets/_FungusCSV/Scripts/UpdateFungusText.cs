@@ -24,10 +24,14 @@ namespace _FungusCSV
                 _localization.SetStandardText(fungusText);
                 gameStarted.enabled = true;
             }
+            catch (OperationCanceledException)
+            {
+                // GameObject が破棄されて読み込みが中断された
+            }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                // throw;
+                // Console.WriteLine は Unity のコンソールに出ないため、失敗が見えなくなっていた
+                Debug.LogException(e, this);
             }
         }
     }

@@ -17,11 +17,11 @@ namespace _FungusCSV
         /// <returns></returns>
         public static async UniTask<T> GetGameInfo<T>(CancellationToken token)
         {
-            var request = UnityWebRequest.Get($"{URL}?sheetName={SheetName}");
+            using var request = UnityWebRequest.Get($"{URL}?sheetName={SheetName}");
             await request.SendWebRequest().ToUniTask(cancellationToken: token);
             if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError or UnityWebRequest.Result.DataProcessingError)
             {
-                Debug.Log("fail to get card info from google sheet");
+                Debug.LogError("fail to get text data from google sheet");
                 throw new Exception(request.error);
             }
 
