@@ -6,7 +6,8 @@ on:
 jobs:
   dotnet-format:
     env:
-      FOLDER_PATH: ./Assets/
+      # TextMesh Pro の同梱サンプル (Assets/TextMesh Pro) はサードパーティのコードなので対象外
+      FOLDER_PATH: ./Assets/_FungusCSV/
     runs-on: ubuntu-latest
     steps:
       - name: Get branch info
@@ -31,36 +32,27 @@ jobs:
         with:
           files: ${{ env.FOLDER_PATH }}
 
-      - name: Install dotnet-format
-        if: "!contains(steps.log.outputs.message, 'skip ci') && steps.check_folder.outputs.files_exists == 'true'"
-        run: |
-          rm -fr ./.config/dotnet-tools.json
-          dotnet new tool-manifest
-          dotnet tool install dotnet-format
+      # dotnet format は .NET SDK に同梱されている。Unity プロジェクトには .csproj / .sln が
+      # コミットされていないため、--folder でフォルダ単位に whitespace 整形を検査する。
       - name: Check format
         if: "!contains(steps.log.outputs.message, 'skip ci') && steps.check_folder.outputs.files_exists == 'true'"
         id: check
-        uses: xt0rted/dotnet-format@v1.2.0
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          action: "check"
-          folder: ${{ env.FOLDER_PATH }}
-          fail-fast: false
+        run: |
+          if dotnet format whitespace "$FOLDER_PATH" --folder --verify-no-changes; then
+            echo "has-changes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has-changes=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Run format
         if: steps.check.outputs.has-changes == 'true'
-        uses: xt0rted/dotnet-format@v1.2.0
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          action: "fix"
-          folder: ${{ env.FOLDER_PATH }}
+        run: dotnet format whitespace "$FOLDER_PATH" --folder
 
       - name: Commit files
         if: steps.check.outputs.has-changes == 'true'
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ./.config/dotnet-tools.json
           git commit -a -m 'Automated dotnet-format update [skip ci]' -m 'Co-authored-by: ${{ github.event.pull_request.user.login }} <${{ github.event.pull_request.user.id }}+${{ github.event.pull_request.user.login }}@users.noreply.github.com>' || echo "No changes to commit"
       - name: Push changes
         if: steps.check.outputs.has-changes == 'true'
