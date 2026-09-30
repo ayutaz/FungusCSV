@@ -16,14 +16,14 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout repo
-        uses: actions/checkout@v2.4.2
+        uses: actions/checkout@v4
         with:
           ref: ${{ steps.comment-branch.outputs.ref }}
           persist-credentials: false
 
       - name: Check latest commit message
         id: log
-        run: echo "::set-output name=message::$(git log --no-merges -1 --oneline)"
+        run: echo "message=$(git log --no-merges -1 --oneline)" >> "$GITHUB_OUTPUT"
 
       - name: Check folder existence
         id: check_folder

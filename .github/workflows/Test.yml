@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out my unity project.
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Run EditMode and PlayMode Test
         uses: game-ci/unity-test-runner@v2
         with:
@@ -24,7 +24,7 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           unityVersion: 2021.3.4f1
       # テストの実行結果をアーティファクトにアップロードして後から参照可能にする
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Test results

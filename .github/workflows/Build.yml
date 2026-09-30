@@ -28,13 +28,13 @@ jobs:
          - WebGL
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         lfs: true
         clean: false
         
 #     Cache
-    - uses: actions/cache@v2
+    - uses: actions/cache@v4
       with:
         path: Library
         key: Library
@@ -54,7 +54,7 @@ jobs:
   
 
     # Output
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       with:
         name: Build-${{ matrix.targetPlatform }}
         path: build/${{ matrix.targetPlatform }}
